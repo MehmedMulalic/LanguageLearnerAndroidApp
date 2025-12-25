@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.auth
+package com.example.myapplication.ui.auth.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,31 +10,31 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AuthViewModel @Inject constructor(
+class LoginViewModel @Inject constructor(
     private val repository: AuthRepository
 ) : ViewModel() {
-    private val _state = MutableStateFlow<AuthState>(AuthState.Loading)
-    val state: StateFlow<AuthState> = _state
+    private val _state = MutableStateFlow<LoginState>(LoginState.Loading)
+    val state: StateFlow<LoginState> = _state
 
     init {
         viewModelScope.launch {
             repository.token.collect { token ->
                 _state.value =
                     when (token) {
-                        null -> AuthState.Unauthenticated
-                        "errorCredentials" -> AuthState.Error("Bad credentials")
-                        else -> AuthState.Authenticated
+                        null -> LoginState.Unauthenticated
+                        "errorCredentials" -> LoginState.Error("Bad credentials")
+                        else -> LoginState.Authenticated
                     }
             }
         }
     }
 
-    fun login(email: String, password: String) {
+    fun login(username: String, password: String) {
         viewModelScope.launch {
             try {
-                repository.login(email, password)
+                repository.login(username, password)
             } catch (e: Exception) {
-                _state.value = AuthState.Error("Login failed: ${e.message}")
+                _state.value = LoginState.Error("Login failed: ${e.message}")
             }
         }
     }

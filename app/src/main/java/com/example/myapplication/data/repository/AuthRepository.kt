@@ -20,8 +20,12 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    suspend fun logout() {
+    fun logout() {
         tokenStore.clearToken()
+    }
+
+    fun signup(username: String, password: String) {
+        TODO()
     }
 
     val token: Flow<String?> = tokenStore.token

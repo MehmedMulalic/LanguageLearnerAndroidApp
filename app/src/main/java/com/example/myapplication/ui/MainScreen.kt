@@ -4,12 +4,15 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.ui.auth.AuthScreen
+import com.example.myapplication.ui.auth.login.LoginScreen
+import com.example.myapplication.ui.auth.signup.SignupScreen
 import com.example.myapplication.ui.home.HomeScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
-object Authentication
+object Login
+@Serializable
+object Signup
 @Serializable
 object Home
 
@@ -17,13 +20,28 @@ object Home
 fun MainScreen() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = Authentication) {
-        composable<Authentication> {
-            AuthScreen(
+    NavHost(navController = navController, startDestination = Login) {
+        composable<Login> {
+            LoginScreen(
                 onLoginSuccess = {
                     navController.navigate(Home) {
-                        popUpTo(Authentication) { inclusive = true }
+                        popUpTo(Login) { inclusive = true }
                     }
+                },
+                onSignupSelect = {
+                    navController.navigate(Signup)
+                }
+            )
+        }
+        composable<Signup> {
+            SignupScreen(
+                onSignupSuccess = {
+                    navController.navigate(Home) {
+                        popUpTo(Signup) { inclusive = true }
+                    }
+                },
+                onLoginSelect = {
+                    navController.navigate(Login)
                 }
             )
         }

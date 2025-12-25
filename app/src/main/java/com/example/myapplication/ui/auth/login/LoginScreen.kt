@@ -1,4 +1,4 @@
-package com.example.myapplication.ui.auth
+package com.example.myapplication.ui.auth.login
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,17 +39,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
-fun AuthScreen(
+fun LoginScreen(
     onLoginSuccess: () -> Unit,
-    authViewModel: AuthViewModel = hiltViewModel()
+    onSignupSelect: () -> Unit,
+    loginViewModel: LoginViewModel = hiltViewModel()
 ) {
-    val state by authViewModel.state.collectAsState()
+    val state by loginViewModel.state.collectAsState()
 
     when (state) {
-        AuthState.Loading -> LoadingForm()
-        AuthState.Authenticated -> onLoginSuccess()
-        AuthState.Unauthenticated -> LoginForm(authViewModel)
-        is AuthState.Error -> LoginForm(authViewModel, true)
+        LoginState.Loading -> LoadingForm()
+        LoginState.Authenticated -> onLoginSuccess()
+        LoginState.Unauthenticated -> LoginForm(loginViewModel, onSignupSelect)
+        is LoginState.Error -> LoginForm(loginViewModel, onSignupSelect, true)
     }
 }
 
@@ -64,8 +65,8 @@ fun LoadingForm() {
 }
 
 @Composable
-fun LoginForm(viewModel: AuthViewModel, isError: Boolean = false) {
-    var email by remember { mutableStateOf("") }
+fun LoginForm(viewModel: LoginViewModel, onSignupSelect: () -> Unit, isError: Boolean = false) {
+    var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
 
@@ -83,13 +84,13 @@ fun LoginForm(viewModel: AuthViewModel, isError: Boolean = false) {
         )
         Spacer(modifier = Modifier.height(64.dp))
         Text(
-            "Sign in",
+            "Login",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold
         )
         OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
+            value = username,
+            onValueChange = { username = it },
             label = { Text("Username") },
             shape = RoundedCornerShape(24.dp),
             singleLine = true,
@@ -123,7 +124,7 @@ fun LoginForm(viewModel: AuthViewModel, isError: Boolean = false) {
         )
         if (isError) {
             Text(
-                "Wrong email or password. Try again.",
+                "Wrong username or password. Try again.",
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -133,12 +134,12 @@ fun LoginForm(viewModel: AuthViewModel, isError: Boolean = false) {
                 .padding(vertical = 12.dp, horizontal = 24.dp)
                 .fillMaxWidth(),
             onClick = {
-                viewModel.login(email, password)
+                viewModel.login(username, password)
             }
         ) {
             Text("Login")
         }
-        Spacer(modifier = Modifier.height(48.dp))
+        Spacer(modifier = Modifier.height(64.dp))
         Text(
             "Don't have an account?",
             style = MaterialTheme.typography.bodyMedium
@@ -151,7 +152,7 @@ fun LoginForm(viewModel: AuthViewModel, isError: Boolean = false) {
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onSecondary
             ),
-            onClick = {}
+            onClick = { onSignupSelect() }
         ) {
             Text("Sign up")
         }
