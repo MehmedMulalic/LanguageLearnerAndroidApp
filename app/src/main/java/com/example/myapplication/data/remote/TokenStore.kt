@@ -5,18 +5,21 @@ import android.content.SharedPreferences
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.SecretKey
 import javax.inject.Inject
 import androidx.core.content.edit
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import javax.crypto.spec.GCMParameterSpec
+import javax.inject.Singleton
 
+@Singleton
 class TokenStore @Inject constructor(
     @param:ApplicationContext private val context: Context
 ) {
@@ -36,28 +39,42 @@ class TokenStore @Inject constructor(
 
     private val secretKey: SecretKey by lazy { getOrCreateSecretKey() }
 
-    val token: Flow<String?> = callbackFlow {
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+    private val _token = MutableStateFlow(readToken())
+    val token: StateFlow<String?> = _token.asStateFlow()
+
+    init {
+        Log.d("TokenStore", "TokenStore initialized, initial token: ${_token.value?.take(30)}")
+        prefs.registerOnSharedPreferenceChangeListener { _, key ->
             if (key == TOKEN_KEY) {
-                trySend(readToken())
+                val newToken = readToken()
+                Log.d("TokenStore", "Prefs changed, updating StateFlow: ${newToken?.take(30)}")
+                _token.value = newToken
             }
         }
-        prefs.registerOnSharedPreferenceChangeListener(listener)
-        trySend(readToken())
-        awaitClose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
     }
 
     fun saveToken(token: String) {
-        val cipher = Cipher.getInstance(AES_MODE)
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
-        val iv = cipher.iv
-        val encrypted = cipher.doFinal(token.toByteArray())
-        val combined = iv + encrypted
-        prefs.edit { putString(TOKEN_KEY, Base64.encodeToString(combined, Base64.DEFAULT)) }
+        Log.d("TokenStore", "saveToken called: ${token.take(30)}")
+        try {
+            val cipher = Cipher.getInstance(AES_MODE)
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+            val iv = cipher.iv
+            val encrypted = cipher.doFinal(token.toByteArray())
+            val combined = iv + encrypted
+            prefs.edit {
+                putString(TOKEN_KEY, Base64.encodeToString(combined, Base64.DEFAULT))
+            }
+            _token.value = token
+            Log.d("TokenStore", "Token saved and StateFlow updated: ${_token.value?.take(30)}")
+        } catch (e: Exception) {
+            Log.e("TokenStore", "Error saving token", e)
+            e.printStackTrace()
+        }
     }
 
     fun clearToken() {
         prefs.edit { remove(TOKEN_KEY) }
+        _token.value = null
     }
 
     fun errorCredentialsToken() {
@@ -65,13 +82,19 @@ class TokenStore @Inject constructor(
     }
 
     private fun readToken(): String? {
-        val encoded = prefs.getString(TOKEN_KEY, null) ?: return null
-        val combined = Base64.decode(encoded, Base64.DEFAULT)
-        val iv = combined.copyOfRange(0, IV_SIZE)
-        val encrypted = combined.copyOfRange(IV_SIZE, combined.size)
-        val cipher = Cipher.getInstance(AES_MODE)
-        cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, iv))
-        return String(cipher.doFinal(encrypted))
+        return try {
+            val encoded = prefs.getString(TOKEN_KEY, null) ?: return null
+            val combined = Base64.decode(encoded, Base64.DEFAULT)
+            val iv = combined.copyOfRange(0, IV_SIZE)
+            val encrypted = combined.copyOfRange(IV_SIZE, combined.size)
+            val cipher = Cipher.getInstance(AES_MODE)
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, GCMParameterSpec(128, iv))
+            return String(cipher.doFinal(encrypted))
+        } catch (e: Exception) {
+            e.printStackTrace()
+            clearToken()
+            null
+        }
     }
 
     private fun getOrCreateSecretKey(): SecretKey {

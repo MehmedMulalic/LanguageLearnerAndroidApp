@@ -1,5 +1,6 @@
 package com.example.myapplication.data.repository
 
+import android.util.Log
 import com.example.myapplication.data.model.LoginRequest
 import com.example.myapplication.data.remote.ApiService
 import com.example.myapplication.data.remote.TokenStore
@@ -13,10 +14,15 @@ class AuthRepository @Inject constructor(
 ) {
     suspend fun login(username: String, password: String) {
         try {
+            Log.d("AuthRepository", "Attempting login...")
             val response = api.postLogin(LoginRequest(username, password))
             tokenStore.saveToken(response.accessToken)
         } catch (e: HttpException) {
+            Log.e("AuthRepository", "Login failed with HTTP ${e.code()}", e)
             tokenStore.errorCredentialsToken()
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Login failed", e)
+            throw e
         }
     }
 
