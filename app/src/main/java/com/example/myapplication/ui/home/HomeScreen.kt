@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
@@ -20,6 +22,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -30,12 +36,13 @@ fun HomeScreen(
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
     val username: String by homeViewModel.username.collectAsState()
+    val streak: Int = 5 //TODO()
 
-    HomeScreenForm(username)
+    HomeScreenForm(username, streak)
 }
 
 @Composable
-fun HomeScreenForm(username: String) {
+fun HomeScreenForm(username: String, streak: Int) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -48,12 +55,24 @@ fun HomeScreenForm(username: String) {
                 "Welcome Back $username",
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                fontSize = 20.sp
+                fontSize = 30.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                buildAnnotatedString {
+                    append("Your current streak is ")
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("$streak")
+                    }
+                    append(" days")
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                fontSize = 18.sp
             )
             Spacer(modifier = Modifier.height(36.dp))
             Button(
                 onClick = {},
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally).width(200.dp)
             ) {
                 Text(
                     "Start",
@@ -67,11 +86,53 @@ fun HomeScreenForm(username: String) {
             }
             Spacer(modifier = Modifier.height(18.dp))
             Card(
-                modifier = Modifier.align(Alignment.CenterHorizontally)
+                modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth()
             ) {
                 Text(
-                    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vestibulum elit at auctor varius. Pellentesque efficitur auctor orci, nec facilisis nibh vestibulum eget. Sed sollicitudin, turpis sit amet cursus luctus, eros erat ornare est, at maximus lorem justo dapibus orci. Nam blandit diam eros, mattis accumsan sapien dignissim vel. Duis gravida, ante non aliquam pretium, neque metus dictum lorem, ac sodales enim leo vel metus. Integer quis orci commodo, dictum sem nec, viverra tortor. Nulla facilisi. Phasellus cursus vel magna et mollis. Curabitur dictum fermentum lacus id dignissim. Vivamus in nunc lacus. In aliquet laoreet odio, at efficitur velit imperdiet eget. Duis in elit arcu. Nunc viverra mollis nunc a euismod. Sed pulvinar vulputate velit, eu tristique lacus egestas ac. Suspendisse mi dui, bibendum non accumsan non, finibus in nibh. Ut ipsum velit, dictum vel justo at, accumsan maximus purus.\n",
-                    modifier = Modifier.padding(12.dp)
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                            fontWeight = MaterialTheme.typography.titleMedium.fontWeight
+                        )) {
+                            append("Today's Overview\n\n")
+                        }
+                        append("Ipsum Lorem")
+                    },
+                    modifier = Modifier.padding(18.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Card(
+                modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth()
+            ) {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                            fontWeight = MaterialTheme.typography.titleMedium.fontWeight
+                        )) {
+                            append("Statistics\n\n")
+                        }
+                        append("Ipsum Lorem")
+                    },
+                    modifier = Modifier.padding(18.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Card(
+                modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth()
+            ) {
+                Text(
+                    buildAnnotatedString {
+                        withStyle(style = SpanStyle(
+                            fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                            fontWeight = MaterialTheme.typography.titleMedium.fontWeight
+                        )) {
+                            append("Latest words\n\n")
+                        }
+                        append("Ipsum Lorem")
+                    },
+                    modifier = Modifier.padding(18.dp)
                 )
             }
         }
@@ -81,5 +142,5 @@ fun HomeScreenForm(username: String) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewHomeScreen() {
-    HomeScreenForm("Mele")
+    HomeScreenForm("Mele", 5)
 }
