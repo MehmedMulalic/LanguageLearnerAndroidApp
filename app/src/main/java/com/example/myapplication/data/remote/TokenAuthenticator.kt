@@ -1,6 +1,5 @@
 package com.example.myapplication.data.remote
 
-import android.util.Log
 import com.example.myapplication.data.model.RefreshRequest
 import kotlinx.coroutines.runBlocking
 import okhttp3.Authenticator
