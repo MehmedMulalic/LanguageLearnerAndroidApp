@@ -2,6 +2,7 @@ package com.example.myapplication.data.repository
 
 import android.util.Log
 import com.example.myapplication.data.model.LoginRequest
+import com.example.myapplication.data.model.RefreshResponse
 import com.example.myapplication.data.remote.ApiService
 import com.example.myapplication.data.remote.TokenStore
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +17,7 @@ class AuthRepository @Inject constructor(
         try {
             Log.d("AuthRepository", "Attempting login...")
             val response = api.postLogin(LoginRequest(username, password))
-            tokenStore.saveToken(response.accessToken)
+            tokenStore.saveTokens(RefreshResponse(response.accessToken, response.refreshToken))
         } catch (e: HttpException) {
             Log.e("AuthRepository", "Login failed with HTTP ${e.code()}", e)
             tokenStore.errorCredentialsToken()

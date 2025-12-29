@@ -6,6 +6,11 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface ApiService {
+    @POST("/auth/refresh")
+    suspend fun postRefresh(
+        @Body refreshToken: RefreshRequest
+    ): RefreshResponse
+
     @POST("auth/login")
     suspend fun postLogin(
         @Body request: LoginRequest
