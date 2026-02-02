@@ -1,50 +1,98 @@
 package com.example.myapplication.ui
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.myapplication.ui.auth.login.LoginScreen
-import com.example.myapplication.ui.auth.signup.SignupScreen
 import com.example.myapplication.ui.home.HomeScreen
-import kotlinx.serialization.Serializable
+import com.example.myapplication.ui.home.HomeScreenForm
+import com.example.myapplication.ui.profile.ProfileScreen
 
-@Serializable
-object Login
-@Serializable
-object Signup
-@Serializable
-object Home
+enum class Destination(
+    val route: String,
+    val label: String,
+    val icon: ImageVector
+) {
+    STATISTICS("statistics", "Statistics", Icons.Default.BarChart),
+    HOME("home", "Home", Icons.Default.Home),
+    PROFILE("profile", "Profile", Icons.Default.AccountCircle)
+}
+
+@Composable
+fun AppNavHost(
+    navController: NavHostController,
+    startDestination: Destination,
+    modifier: Modifier = Modifier
+) {
+    NavHost(
+        navController,
+        startDestination = startDestination.route
+    ) {
+        Destination.entries.forEach { destination ->
+            composable(destination.route) {
+                when (destination) {
+                    Destination.STATISTICS -> ProfileScreen() //TODO(): Temporary, change
+                    Destination.HOME -> HomeScreen()
+                    Destination.PROFILE -> ProfileScreen()
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    val startDestination = Destination.HOME
 
-    NavHost(navController = navController, startDestination = Login) {
-        composable<Login> {
-            LoginScreen(
-                onLoginSuccess = {
-                    navController.navigate(Home) {
-                        popUpTo(Login) { inclusive = true }
-                    }
-                },
-                onSignupSelect = {
-                    navController.navigate(Signup)
+    var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
+
+    Scaffold(
+        bottomBar = {
+            NavigationBar {
+                Destination.entries.forEachIndexed { index, destination ->
+                    NavigationBarItem(
+                        selected = selectedDestination == index,
+                        onClick = {
+                            navController.navigate(route = destination.route)
+                            selectedDestination = index
+                        },
+                        icon = {
+                            Icon(
+                                destination.icon,
+                                contentDescription = destination.label
+                            )
+                        },
+                        label = { Text(destination.label) }
+                    )
                 }
-            )
+            }
         }
-        composable<Signup> {
-            SignupScreen(
-                onSignupSuccess = {
-                    navController.navigate(Home) {
-                        popUpTo(Signup) { inclusive = true }
-                    }
-                },
-                onLoginSelect = {
-                    navController.navigate(Login)
-                }
-            )
-        }
-        composable<Home> { HomeScreen() }
+    ) { contentPadding ->
+        AppNavHost(navController, startDestination, modifier = Modifier.padding(contentPadding))
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewMainScreen() {
+    MainScreen()
 }
