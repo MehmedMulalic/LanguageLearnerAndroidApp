@@ -13,15 +13,40 @@ import javax.inject.Inject
 class SignupViewModel @Inject constructor(
     private val repository: AuthRepository
 ) : ViewModel() {
-    private val _state = MutableStateFlow<SignupState>(SignupState.Unauthenticated)
-    val state: StateFlow<SignupState> = _state
+    private val _uiState = MutableStateFlow(SignupUiState())
+    val uiState: StateFlow<SignupUiState> = _uiState
 
-    fun signup(username: String, password: String) {
+    fun onUsernameChange(value: String) {
+        _uiState.value = _uiState.value.copy(username = value)
+    }
+
+    fun onPasswordChange(value: String) {
+        _uiState.value = _uiState.value.copy(password = value)
+    }
+    fun onConfirmPasswordChange(value: String) {
+        _uiState.value = _uiState.value.copy(confirmPassword = value)
+    }
+
+    fun signup() {
+        val current = _uiState.value
+
+        if (current.password != current.confirmPassword) {
+            _uiState.value = current.copy(errorMessage = "Passwords do not match")
+            return
+        }
+
         viewModelScope.launch {
+            _uiState.value = current.copy(isLoading = true, errorMessage = null)
+
             try {
-                repository.signup(username, password)
+                repository.signup(current.username, current.password)
+
+                _uiState.value = SignupUiState(isAuthenticated = true)
             } catch (e: Exception) {
-                _state.value = SignupState.Error("Signup failed: ${e.message}")
+                _uiState.value = current.copy(
+                    isLoading = false,
+                    errorMessage = "Signup failed. Error message" + e.message
+                )
             }
         }
     }

@@ -20,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
@@ -40,24 +42,35 @@ fun SignupScreen(
     onLoginSelect: () -> Unit,
     signupViewModel: SignupViewModel = hiltViewModel()
 ) {
-    val state by signupViewModel.state.collectAsState()
+    val state by signupViewModel.uiState.collectAsState()
 
-    when (state) {
-        SignupState.Authenticated -> onSignupSuccess()
-        SignupState.Unauthenticated -> SignupForm(signupViewModel, onLoginSelect)
-        is SignupState.Error -> TODO()
+    LaunchedEffect(state.isAuthenticated) {
+        if (state.isAuthenticated) {
+            onSignupSuccess()
+        }
     }
+
+    SignupForm(
+        state,
+        signupViewModel::onUsernameChange,
+        signupViewModel::onPasswordChange,
+        signupViewModel::onConfirmPasswordChange,
+        signupViewModel::signup,
+        onLoginSelect,
+    )
 }
 
 @Composable
-fun SignupForm(signupViewModel: SignupViewModel, onLoginSelect: () -> Unit) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+fun SignupForm(
+    state: SignupUiState,
+    onUsernameChange: (String) -> Unit,
+    onPasswordChange: (String) -> Unit,
+    onConfirmPasswordChange: (String) -> Unit,
+    onSignupClick: () -> Unit,
+    onLoginSelect: () -> Unit,
+) {
     var passwordVisible by remember { mutableStateOf(false) }
-    var confirmPassword by remember { mutableStateOf("") }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
-    //! OVO OVDJE
-    var isError by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -78,25 +91,25 @@ fun SignupForm(signupViewModel: SignupViewModel, onLoginSelect: () -> Unit) {
             fontWeight = FontWeight.SemiBold
         )
         OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
+            value = state.username,
+            onValueChange = onUsernameChange,
             label = { Text("Username") },
             shape = RoundedCornerShape(24.dp),
             singleLine = true,
             maxLines = 1,
-            isError = isError,
+            isError = state.errorMessage != null,
             modifier = Modifier
                 .padding(horizontal = 36.dp)
                 .fillMaxWidth()
         )
         OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
+            value = state.password,
+            onValueChange = onPasswordChange,
             label = { Text("Password") },
             shape = RoundedCornerShape(24.dp),
             singleLine = true,
             maxLines = 1,
-            isError = isError,
+            isError = state.errorMessage != null,
             modifier = Modifier
                 .padding(horizontal = 36.dp)
                 .fillMaxWidth(),
@@ -112,13 +125,13 @@ fun SignupForm(signupViewModel: SignupViewModel, onLoginSelect: () -> Unit) {
             }
         )
         OutlinedTextField(
-            value = confirmPassword,
-            onValueChange = { confirmPassword = it },
+            value = state.confirmPassword,
+            onValueChange = onConfirmPasswordChange,
             label = { Text("Confirm Password") },
             shape = RoundedCornerShape(24.dp),
             singleLine = true,
             maxLines = 1,
-            isError = isError,
+            isError = state.errorMessage != null,
             modifier = Modifier
                 .padding(horizontal = 36.dp)
                 .fillMaxWidth(),
@@ -133,16 +146,14 @@ fun SignupForm(signupViewModel: SignupViewModel, onLoginSelect: () -> Unit) {
                 )
             }
         )
-        if (isError) {
+        if (state.errorMessage != null) {
             TODO()
         }
         Button(
             modifier = Modifier
                 .padding(vertical = 12.dp, horizontal = 24.dp)
                 .fillMaxWidth(),
-            onClick = {
-                signupViewModel.signup(username, password)
-            }
+            onClick = onSignupClick
         ) {
             Text("Sign up")
         }
@@ -164,4 +175,17 @@ fun SignupForm(signupViewModel: SignupViewModel, onLoginSelect: () -> Unit) {
             Text("Login")
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SignupPreview() {
+    SignupForm(
+        SignupUiState(),
+        {},
+        {},
+        {},
+        {},
+        {}
+    )
 }
