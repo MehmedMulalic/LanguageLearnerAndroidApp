@@ -44,6 +44,6 @@ fun AuthenticationScreen() {
                 }
             )
         }
-        composable<Home> { MainScreen() }
+        composable<Home> { MainScreen(navController) }
     }
 }

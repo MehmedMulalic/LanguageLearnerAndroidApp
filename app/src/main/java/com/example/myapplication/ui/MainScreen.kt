@@ -17,13 +17,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.myapplication.ui.home.HomeScreen
-import com.example.myapplication.ui.home.HomeScreenForm
 import com.example.myapplication.ui.profile.ProfileScreen
 
 enum class Destination(
@@ -38,20 +36,21 @@ enum class Destination(
 
 @Composable
 fun AppNavHost(
-    navController: NavHostController,
+    rootNavController: NavHostController,
+    bottomNavController: NavHostController,
     startDestination: Destination,
     modifier: Modifier = Modifier
 ) {
     NavHost(
-        navController,
+        bottomNavController,
         startDestination = startDestination.route
     ) {
         Destination.entries.forEach { destination ->
             composable(destination.route) {
                 when (destination) {
-                    Destination.STATISTICS -> ProfileScreen() //TODO(): Temporary, change
-                    Destination.HOME -> HomeScreen()
-                    Destination.PROFILE -> ProfileScreen()
+                    Destination.STATISTICS -> ProfileScreen(rootNavController, modifier) //TODO(Temporary)
+                    Destination.HOME -> HomeScreen(modifier)
+                    Destination.PROFILE -> ProfileScreen(rootNavController, modifier)
                 }
             }
         }
@@ -59,8 +58,10 @@ fun AppNavHost(
 }
 
 @Composable
-fun MainScreen() {
-    val navController = rememberNavController()
+fun MainScreen(
+    rootNavController: NavHostController
+) {
+    val bottomNavController = rememberNavController()
     val startDestination = Destination.HOME
 
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
@@ -72,7 +73,7 @@ fun MainScreen() {
                     NavigationBarItem(
                         selected = selectedDestination == index,
                         onClick = {
-                            navController.navigate(route = destination.route)
+                            bottomNavController.navigate(route = destination.route)
                             selectedDestination = index
                         },
                         icon = {
@@ -87,12 +88,6 @@ fun MainScreen() {
             }
         }
     ) { contentPadding ->
-        AppNavHost(navController, startDestination, modifier = Modifier.padding(contentPadding))
+        AppNavHost(rootNavController, bottomNavController, startDestination, modifier = Modifier.padding(contentPadding))
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewMainScreen() {
-    MainScreen()
 }

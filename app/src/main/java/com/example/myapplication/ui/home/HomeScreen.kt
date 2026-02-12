@@ -41,23 +41,29 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier = Modifier,
     homeViewModel: HomeViewModel = hiltViewModel()
 ) {
-    val username: String by homeViewModel.username.collectAsState()
-    val streak = 5 //TODO()
+    val state by homeViewModel.uiState.collectAsState()
 
-    HomeScreenForm(username, streak)
+    HomeScreenForm(
+        modifier,
+        state.username
+    )
 }
 
 @Composable
-fun HomeScreenForm(username: String, streak: Int) {
+fun HomeScreenForm(
+    modifier: Modifier = Modifier,
+    username: String
+) {
     val cardSpanState = SpanStyle(
         fontSize = MaterialTheme.typography.titleLarge.fontSize,
         fontWeight = FontWeight.Medium
     )
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -74,17 +80,18 @@ fun HomeScreenForm(username: String, streak: Int) {
                 fontSize = 30.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                buildAnnotatedString {
-                    append("Your current streak is ")
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("$streak")
-                    }
-                    append(" days")
-                },
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                fontSize = 18.sp
-            )
+            // Streak UI, removed for now
+//            Text(
+//                buildAnnotatedString {
+//                    append("Your current streak is ")
+//                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+//                        append("$streak")
+//                    }
+//                    append(" days")
+//                },
+//                modifier = Modifier.align(Alignment.CenterHorizontally),
+//                fontSize = 18.sp
+//            )
             Spacer(modifier = Modifier.height(30.dp))
             Button(
                 onClick = {},
@@ -149,7 +156,7 @@ fun HomeScreenForm(username: String, streak: Int) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewHomeScreen() {
-    HomeScreenForm("Mele", 5)
+    HomeScreenForm(username = "Mele")
 }
 
 @Preview(showBackground = true)

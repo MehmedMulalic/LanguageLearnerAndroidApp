@@ -22,7 +22,7 @@ class TokenAuthenticator(
                 apiService.postRefresh(RefreshRequest(refreshToken))
             }
         } catch (e: Exception) {
-            tokenStore.clearToken()
+            tokenStore.clearTokens()
             e.printStackTrace()
             return null
         }

@@ -7,8 +7,6 @@
 
 ## In progress:
 - Switch from dummyjson to language learner host
-- signup screen
-- logout
 
 ## File structure:
 - Main files -> do not require changes

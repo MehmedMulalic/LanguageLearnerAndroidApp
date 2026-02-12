@@ -13,6 +13,8 @@ class AuthRepository @Inject constructor(
     private val api: ApiService,
     private val tokenStore: TokenStore
 ) {
+    val token: Flow<String?> = tokenStore.token
+
     suspend fun login(username: String, password: String) {
         try {
             Log.d("AuthRepository", "Attempting login...")
@@ -27,13 +29,7 @@ class AuthRepository @Inject constructor(
         }
     }
 
-    fun logout() {
-        tokenStore.clearToken()
-    }
-
     fun signup(username: String, password: String) {
         TODO()
     }
-
-    val token: Flow<String?> = tokenStore.token
 }

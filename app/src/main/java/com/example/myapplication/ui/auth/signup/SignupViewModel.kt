@@ -45,7 +45,7 @@ class SignupViewModel @Inject constructor(
             } catch (e: Exception) {
                 _uiState.value = current.copy(
                     isLoading = false,
-                    errorMessage = "Signup failed. Error message" + e.message
+                    errorMessage = "Signup failed. Error message: ${e.message}"
                 )
             }
         }

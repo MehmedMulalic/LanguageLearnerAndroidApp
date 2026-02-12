@@ -63,8 +63,9 @@ class TokenStore @Inject constructor(
         return decrypt(refreshToken)
     }
 
-    fun clearToken() {
+    fun clearTokens() {
         prefs.edit { remove(ACCESS_TOKEN_KEY) }
+        prefs.edit { remove(REFRESH_TOKEN_KEY) }
         _token.value = null
     }
 
@@ -123,7 +124,7 @@ class TokenStore @Inject constructor(
             return decrypt(encoded)
         } catch (e: Exception) {
             e.printStackTrace()
-            clearToken()
+            clearTokens()
             return null
         }
     }
