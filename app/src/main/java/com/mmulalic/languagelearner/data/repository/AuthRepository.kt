@@ -1,0 +1,35 @@
+package com.mmulalic.languagelearner.data.repository
+
+import android.util.Log
+import com.mmulalic.languagelearner.data.model.LoginRequest
+import com.mmulalic.languagelearner.data.model.RefreshResponse
+import com.mmulalic.languagelearner.data.remote.ApiService
+import com.mmulalic.languagelearner.data.remote.TokenStore
+import kotlinx.coroutines.flow.Flow
+import retrofit2.HttpException
+import javax.inject.Inject
+
+class AuthRepository @Inject constructor(
+    private val api: ApiService,
+    private val tokenStore: TokenStore
+) {
+    val token: Flow<String?> = tokenStore.token
+
+    suspend fun login(username: String, password: String) {
+        try {
+            Log.d("AuthRepository", "Attempting login...")
+            val response = api.postLogin(LoginRequest(username, password))
+            tokenStore.saveTokens(RefreshResponse(response.accessToken, response.refreshToken))
+        } catch (e: HttpException) {
+            Log.e("AuthRepository", "Login failed with HTTP ${e.code()}", e)
+            tokenStore.errorCredentialsToken()
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "Login failed", e)
+            throw e
+        }
+    }
+
+    fun signup(username: String, password: String) {
+        TODO()
+    }
+}

@@ -8,11 +8,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.myapplication"
+    namespace = "com.mmulalic.languagelearner"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.myapplication"
+        applicationId = "com.mmulalic.languagelearner"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

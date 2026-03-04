@@ -1,12 +1,12 @@
 *.iml
-.gradle
-/local.properties
-/.idea
-/.kotlin
+*.log
+.gradle/
+.idea/
+.kotlin/
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 .cxx
 local.properties
-./*.log
+hs_err_pid9696.log

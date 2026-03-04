@@ -1,4 +1,4 @@
-package com.example.myapplication
+package com.mmulalic.languagelearner
 
 import org.junit.Test
 
