@@ -1,6 +1,6 @@
 # Language Learner Android App
 
-An Android application based on [ZejdK's Language Learner]((https://github.com/ZejdK/LanguageLearner)) website, designed to help users learn new languages through an interactive and user-friendly interface.
+An Android application based on [ZejdK's Language Learner](https://github.com/ZejdK/LanguageLearner) website, designed to help users learn new languages through an interactive and user-friendly interface.
 
 ## 🚀 Features
 
