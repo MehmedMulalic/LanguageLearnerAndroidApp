@@ -1,6 +1,6 @@
 # Language Learner Android App
 
-An Android application based on ZejdK's Language Learner website, designed to help users learn new languages through an interactive and user-friendly interface.
+An Android application based on [ZejdK's Language Learner]((https://github.com/ZejdK/LanguageLearner)) website, designed to help users learn new languages through an interactive and user-friendly interface.
 
 ## 🚀 Features
 
@@ -26,7 +26,6 @@ The project follows a modular structure based on clean architecture principles:
 
 *   `ui/`: Contains all Compose-based UI components, organized by feature (auth, home, profile).
 *   `data/`: Handles data operations, including models, repositories, and remote API definitions.
-*   `di/`: (Likely present) Dependency injection modules.
 
 ## 🏁 Getting Started
 
