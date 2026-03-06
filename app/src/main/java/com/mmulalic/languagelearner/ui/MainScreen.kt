@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -89,5 +90,34 @@ fun MainScreen(
         }
     ) { contentPadding ->
         AppNavHost(rootNavController, bottomNavController, startDestination, modifier = Modifier.padding(contentPadding))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewMainScreen() {
+    Scaffold(
+        bottomBar = {
+            NavigationBar {
+                Destination.entries.forEachIndexed { index, destination ->
+                    NavigationBarItem(
+                        selected = 0 == index,
+                        onClick = {
+//                            bottomNavController.navigate(route = destination.route)
+//                            selectedDestination = index
+                        },
+                        icon = {
+                            Icon(
+                                destination.icon,
+                                contentDescription = destination.label
+                            )
+                        },
+                        label = { Text("IPSUM LOREM") }
+                    )
+                }
+            }
+        }
+    ) { contentPadding ->
+        Text("This is a test", modifier = Modifier.padding(contentPadding))
     }
 }
