@@ -18,6 +18,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -40,7 +42,8 @@ fun AppNavHost(
     rootNavController: NavHostController,
     bottomNavController: NavHostController,
     startDestination: Destination,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    mainViewModel: MainViewModel
 ) {
     NavHost(
         bottomNavController,
@@ -50,7 +53,7 @@ fun AppNavHost(
             composable(destination.route) {
                 when (destination) {
                     Destination.STATISTICS -> ProfileScreen(rootNavController, modifier) //TODO(Temporary)
-                    Destination.HOME -> HomeScreen(modifier)
+                    Destination.HOME -> HomeScreen(mainViewModel, modifier)
                     Destination.PROFILE -> ProfileScreen(rootNavController, modifier)
                 }
             }
@@ -62,6 +65,7 @@ fun AppNavHost(
 fun MainScreen(
     rootNavController: NavHostController
 ) {
+    val mainViewModel: MainViewModel = hiltViewModel()
     val bottomNavController = rememberNavController()
     val startDestination = Destination.HOME
 
@@ -74,7 +78,11 @@ fun MainScreen(
                     NavigationBarItem(
                         selected = selectedDestination == index,
                         onClick = {
-                            bottomNavController.navigate(route = destination.route)
+                            bottomNavController.navigate(route = destination.route) {
+                                popUpTo(bottomNavController.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
                             selectedDestination = index
                         },
                         icon = {
@@ -89,7 +97,7 @@ fun MainScreen(
             }
         }
     ) { contentPadding ->
-        AppNavHost(rootNavController, bottomNavController, startDestination, modifier = Modifier.padding(contentPadding))
+        AppNavHost(rootNavController, bottomNavController, startDestination, Modifier.padding(contentPadding), mainViewModel)
     }
 }
 
@@ -101,11 +109,8 @@ fun PreviewMainScreen() {
             NavigationBar {
                 Destination.entries.forEachIndexed { index, destination ->
                     NavigationBarItem(
-                        selected = 0 == index,
-                        onClick = {
-//                            bottomNavController.navigate(route = destination.route)
-//                            selectedDestination = index
-                        },
+                        selected = 1 == index,
+                        onClick = {},
                         icon = {
                             Icon(
                                 destination.icon,

@@ -16,6 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -37,19 +38,29 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.mmulalic.languagelearner.ui.MainViewModel
 
 @Composable
 fun HomeScreen(
-    modifier: Modifier = Modifier,
-    homeViewModel: HomeViewModel = hiltViewModel()
+    mainViewModel: MainViewModel,
+    modifier: Modifier = Modifier
 ) {
-    val state by homeViewModel.uiState.collectAsState()
+    val state by mainViewModel.uiState.collectAsState()
 
-    HomeScreenForm(
-        modifier,
-        state.username
-    )
+    when (val currentState = state) {
+        is HomeUiState.Loading -> {
+            CircularProgressIndicator(Modifier.fillMaxSize())
+        }
+        is HomeUiState.Success -> {
+            HomeScreenForm(
+                modifier,
+                currentState.username
+            )
+        }
+        is HomeUiState.Error -> {
+            Text(currentState.message)
+        }
+    }
 }
 
 @Composable
