@@ -1,9 +1,10 @@
-package com.mmulalic.languagelearner.ui
+package com.mmulalic.languagelearner.ui.auth
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mmulalic.languagelearner.ui.MainScreen
 import com.mmulalic.languagelearner.ui.auth.login.LoginScreen
 import com.mmulalic.languagelearner.ui.auth.signup.SignupScreen
 import kotlinx.serialization.Serializable

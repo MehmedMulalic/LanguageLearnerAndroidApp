@@ -15,8 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.mmulalic.languagelearner.ui.Home
-import com.mmulalic.languagelearner.ui.Login
+import com.mmulalic.languagelearner.ui.auth.Home
+import com.mmulalic.languagelearner.ui.auth.Login
 import com.mmulalic.languagelearner.ui.home.ProfileItem
 
 @Composable

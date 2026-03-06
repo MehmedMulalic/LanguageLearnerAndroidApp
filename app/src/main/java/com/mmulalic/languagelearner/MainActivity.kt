@@ -3,7 +3,7 @@ package com.mmulalic.languagelearner
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.mmulalic.languagelearner.ui.AuthenticationScreen
+import com.mmulalic.languagelearner.ui.auth.AuthenticationScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
