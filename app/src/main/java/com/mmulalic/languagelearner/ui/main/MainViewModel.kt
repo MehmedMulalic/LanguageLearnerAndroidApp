@@ -1,9 +1,9 @@
-package com.mmulalic.languagelearner.ui
+package com.mmulalic.languagelearner.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mmulalic.languagelearner.data.repository.UserRepository
-import com.mmulalic.languagelearner.ui.home.HomeUiState
+import com.mmulalic.languagelearner.ui.main.home.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -27,7 +27,7 @@ class MainViewModel @Inject constructor(
                 val username = userRepository.getUser()
                 _uiState.value = HomeUiState.Success(username)
             } catch (e: Exception) {
-                _uiState.value = HomeUiState.Error("Failed to load user")
+                _uiState.value = HomeUiState.Error("Failed to load user. Error: ${e.message}")
             }
         }
     }

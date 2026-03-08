@@ -1,4 +1,4 @@
-package com.mmulalic.languagelearner.ui.home
+package com.mmulalic.languagelearner.ui.main.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,7 +38,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mmulalic.languagelearner.ui.MainViewModel
+import com.mmulalic.languagelearner.ui.main.MainViewModel
 
 @Composable
 fun HomeScreen(

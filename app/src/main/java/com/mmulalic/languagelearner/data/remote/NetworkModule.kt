@@ -1,9 +1,10 @@
 package com.mmulalic.languagelearner.data.remote
 
-import android.util.Log
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -16,16 +17,30 @@ import javax.inject.Singleton
 object NetworkModule {
     @Provides
     @Singleton
-    fun provideOkHttpClient(
-        authInterceptor: AuthInterceptor
-    ): OkHttpClient {
+    fun provideCookieStorage(
+        @ApplicationContext context: Context
+    ): CookieStorage {
+        return CookieStorage(context)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCookieJar(
+        storage: CookieStorage
+    ): PersistentCookieJar {
+        return PersistentCookieJar(storage)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(cookieJar: PersistentCookieJar): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
 
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
-            .addInterceptor(authInterceptor)
+            .cookieJar(cookieJar)
             .build()
     }
 
@@ -35,7 +50,7 @@ object NetworkModule {
         okHttpClient: OkHttpClient
     ): ApiService {
         return Retrofit.Builder()
-            .baseUrl("https://dummyjson.com/")
+            .baseUrl("https://llaapi.zejdkrek.com/")
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

@@ -1,4 +1,4 @@
-package com.mmulalic.languagelearner.ui.profile
+package com.mmulalic.languagelearner.ui.main.profile
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,8 +13,19 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val repository: ProfileRepository
 ) : ViewModel() {
-    private val _state = MutableStateFlow<ProfileState>(ProfileState.LoggedIn)
+    private val _state = MutableStateFlow<ProfileState>(ProfileState.Loading)
     val state: StateFlow<ProfileState> = _state
+
+    init {
+        viewModelScope.launch {
+            repository.cookies.collect { cookieValue ->
+                _state.value = when {
+                    cookieValue.isNotEmpty() -> ProfileState.LoggedIn
+                    else -> ProfileState.LoggedOut
+                }
+            }
+        }
+    }
 
     fun logout() {
         viewModelScope.launch {

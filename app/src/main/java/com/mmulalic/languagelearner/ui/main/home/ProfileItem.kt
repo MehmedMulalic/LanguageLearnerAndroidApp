@@ -1,4 +1,4 @@
-package com.mmulalic.languagelearner.ui.home
+package com.mmulalic.languagelearner.ui.main.home
 
 data class ProfileItem(
     val label: String = "",

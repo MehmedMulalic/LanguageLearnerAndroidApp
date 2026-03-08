@@ -1,43 +1,45 @@
-package com.mmulalic.languagelearner.ui.profile
+package com.mmulalic.languagelearner.ui.main.profile
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavHostController
-import com.mmulalic.languagelearner.ui.auth.Home
-import com.mmulalic.languagelearner.ui.auth.Login
-import com.mmulalic.languagelearner.ui.home.ProfileItem
+import com.mmulalic.languagelearner.ui.main.home.ProfileItem
 
 @Composable
 fun ProfileScreen(
-    navController: NavHostController,
+    onSignoutSucces: () -> Unit,
     modifier: Modifier = Modifier,
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {
+    val state by profileViewModel.state.collectAsState()
     val options = listOf(
-        ProfileItem("Settings") {
-
-        },
+        ProfileItem("Settings") {}, //TODO
         ProfileItem("Logout") {
             profileViewModel.logout()
-            navController.navigate(Login) {
-                popUpTo(Home) { inclusive = true }
-            }
         }
     )
 
-    ProfileForm(modifier, options)
+    when (state) {
+        ProfileState.Loading -> CircularProgressIndicator(Modifier.fillMaxSize())
+        ProfileState.LoggedIn -> ProfileForm(modifier, options)
+        ProfileState.LoggedOut -> onSignoutSucces()
+        is ProfileState.Error -> ProfileForm(modifier, options)
+    }
 }
 
 @Composable

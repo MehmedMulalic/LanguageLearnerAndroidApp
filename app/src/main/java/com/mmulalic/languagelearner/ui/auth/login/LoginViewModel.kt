@@ -18,11 +18,11 @@ class LoginViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            repository.token.collect { token ->
+            repository.cookies.collect { cookieValue ->
                 _state.value =
-                    when (token) {
-                        null -> LoginState.Unauthenticated
-                        "errorCredentials" -> LoginState.Error("Bad credentials")
+                    when {
+                        cookieValue.isEmpty() -> LoginState.Unauthenticated
+//                        "errorCredentials" -> LoginState.Error("Bad credentials")
                         else -> LoginState.Authenticated
                     }
             }

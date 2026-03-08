@@ -1,4 +1,4 @@
-package com.mmulalic.languagelearner.ui
+package com.mmulalic.languagelearner.ui.main
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -24,8 +24,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.mmulalic.languagelearner.ui.home.HomeScreen
-import com.mmulalic.languagelearner.ui.profile.ProfileScreen
+import com.mmulalic.languagelearner.ui.main.home.HomeScreen
+import com.mmulalic.languagelearner.ui.main.profile.ProfileScreen
 
 enum class Destination(
     val route: String,
@@ -39,7 +39,7 @@ enum class Destination(
 
 @Composable
 fun AppNavHost(
-    rootNavController: NavHostController,
+    onSignoutSuccess: () -> Unit,
     bottomNavController: NavHostController,
     startDestination: Destination,
     modifier: Modifier = Modifier,
@@ -52,9 +52,9 @@ fun AppNavHost(
         Destination.entries.forEach { destination ->
             composable(destination.route) {
                 when (destination) {
-                    Destination.STATISTICS -> ProfileScreen(rootNavController, modifier) //TODO(Temporary)
+                    Destination.STATISTICS -> {} //TODO: WIP
                     Destination.HOME -> HomeScreen(mainViewModel, modifier)
-                    Destination.PROFILE -> ProfileScreen(rootNavController, modifier)
+                    Destination.PROFILE -> ProfileScreen(onSignoutSuccess, modifier)
                 }
             }
         }
@@ -63,7 +63,7 @@ fun AppNavHost(
 
 @Composable
 fun MainScreen(
-    rootNavController: NavHostController
+    onSignoutSuccess: () -> Unit
 ) {
     val mainViewModel: MainViewModel = hiltViewModel()
     val bottomNavController = rememberNavController()
@@ -97,7 +97,7 @@ fun MainScreen(
             }
         }
     ) { contentPadding ->
-        AppNavHost(rootNavController, bottomNavController, startDestination, Modifier.padding(contentPadding), mainViewModel)
+        AppNavHost(onSignoutSuccess, bottomNavController, startDestination, Modifier.padding(contentPadding), mainViewModel)
     }
 }
 

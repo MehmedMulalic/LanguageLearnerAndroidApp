@@ -162,11 +162,9 @@ fun LoginForm(viewModel: LoginViewModel, onSignupSelect: () -> Unit, isError: Bo
 @Preview(showBackground = true)
 @Composable
 fun PreviewSupportingText() {
-    var password by remember {mutableStateOf("")}
-
     OutlinedTextField(
-        value = password,
-        onValueChange = { password = it },
+        value = "",
+        onValueChange = {},
         label = { Text("Password") },
         shape = RoundedCornerShape(24.dp),
         singleLine = true,

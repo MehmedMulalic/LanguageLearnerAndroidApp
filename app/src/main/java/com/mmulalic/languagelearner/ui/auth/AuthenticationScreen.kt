@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.mmulalic.languagelearner.ui.MainScreen
+import com.mmulalic.languagelearner.ui.main.MainScreen
 import com.mmulalic.languagelearner.ui.auth.login.LoginScreen
 import com.mmulalic.languagelearner.ui.auth.signup.SignupScreen
 import kotlinx.serialization.Serializable
@@ -45,6 +45,14 @@ fun AuthenticationScreen() {
                 }
             )
         }
-        composable<Home> { MainScreen(navController) }
+        composable<Home> {
+            MainScreen(
+                onSignoutSuccess = {
+                    navController.navigate(Login) {
+                        popUpTo(Home) { inclusive = true }
+                    }
+                }
+            )
+        }
     }
 }
