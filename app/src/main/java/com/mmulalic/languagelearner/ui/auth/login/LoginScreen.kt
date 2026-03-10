@@ -162,19 +162,29 @@ fun LoginForm(viewModel: LoginViewModel, onSignupSelect: () -> Unit, isError: Bo
 @Preview(showBackground = true)
 @Composable
 fun PreviewSupportingText() {
-    OutlinedTextField(
-        value = "",
-        onValueChange = {},
-        label = { Text("Password") },
-        shape = RoundedCornerShape(24.dp),
-        singleLine = true,
-        maxLines = 1,
-        isError = false,
+    Column(
         modifier = Modifier
-            .padding(horizontal = 36.dp)
-            .fillMaxWidth(),
-        supportingText = {
-            Text("support")
-        }
-    )
+            .fillMaxSize()
+            .padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        OutlinedTextField(
+            value = "",
+            onValueChange = {},
+            label = { Text("Password") },
+            shape = RoundedCornerShape(24.dp),
+            singleLine = true,
+            maxLines = 1,
+            isError = true,
+            modifier = Modifier
+                .padding(horizontal = 36.dp)
+                .fillMaxWidth(),
+        )
+        Text(
+            "Wrong username or password. Try again.",
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall
+        )
+    }
 }

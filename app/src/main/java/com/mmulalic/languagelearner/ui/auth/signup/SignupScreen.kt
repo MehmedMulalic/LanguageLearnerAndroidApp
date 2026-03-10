@@ -147,7 +147,11 @@ fun SignupForm(
             }
         )
         if (state.errorMessage != null) {
-            TODO()
+            Text(
+                state.errorMessage,
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall
+            )
         }
         Button(
             modifier = Modifier

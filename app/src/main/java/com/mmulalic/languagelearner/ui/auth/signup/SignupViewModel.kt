@@ -17,21 +17,46 @@ class SignupViewModel @Inject constructor(
     val uiState: StateFlow<SignupUiState> = _uiState
 
     fun onUsernameChange(value: String) {
+        if (value.length > 64) { return }
         _uiState.value = _uiState.value.copy(username = value)
     }
 
     fun onPasswordChange(value: String) {
+        if (value.length > 64) { return }
         _uiState.value = _uiState.value.copy(password = value)
     }
     fun onConfirmPasswordChange(value: String) {
+        if (value.length > 64) { return }
         _uiState.value = _uiState.value.copy(confirmPassword = value)
     }
 
     fun signup() {
         val current = _uiState.value
+        val u = current.username
+        val p = current.password
 
-        if (current.password != current.confirmPassword) {
-            _uiState.value = current.copy(errorMessage = "Passwords do not match")
+        var error = when {
+            u.length < 3 -> "Username is too short."
+            u.length > 64 -> "Username is too long."
+            u.any { it.isWhitespace() } -> "Username may not include whitespace."
+            else -> null
+        }
+        if (error != null) {
+            _uiState.value = current.copy(errorMessage = error)
+            return
+        }
+
+        error = when {
+            p != current.confirmPassword -> "Passwords do not match."
+            p.length < 3 -> "Password is too short."
+            p.length > 72 -> "Password is too long."
+            p.none { it.isLowerCase() } -> "Password requires a lower letter."
+            p.none { it.isUpperCase() } -> "Password requires a capital letter."
+            p.none { it.isDigit() } -> "Password requires a digit."
+            else -> null
+        }
+        if (error != null) {
+            _uiState.value = current.copy(errorMessage = error)
             return
         }
 
