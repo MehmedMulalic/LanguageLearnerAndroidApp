@@ -9,7 +9,7 @@ import retrofit2.http.POST
 
 interface ApiService {
     @GET("userdisplaydata")
-    suspend fun getUser(): LoginResponse
+    suspend fun getUserData(): UserData
 
     @POST("signin")
     suspend fun postLogin(

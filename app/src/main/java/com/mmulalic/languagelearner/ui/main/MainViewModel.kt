@@ -24,8 +24,8 @@ class MainViewModel @Inject constructor(
     private fun loadUser() {
         viewModelScope.launch {
             try {
-                val username = userRepository.getUser()
-                _uiState.value = HomeUiState.Success(username)
+                val userData = userRepository.getUserData()
+                _uiState.value = HomeUiState.Success(userData)
             } catch (e: Exception) {
                 _uiState.value = HomeUiState.Error("Failed to load user. Error: ${e.message}")
             }
