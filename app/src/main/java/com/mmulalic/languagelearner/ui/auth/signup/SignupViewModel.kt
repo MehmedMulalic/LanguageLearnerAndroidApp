@@ -2,6 +2,7 @@ package com.mmulalic.languagelearner.ui.auth.signup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mmulalic.languagelearner.data.model.exceptions.UsernameTakenException
 import com.mmulalic.languagelearner.data.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,7 +68,13 @@ class SignupViewModel @Inject constructor(
                 repository.signup(current.username, current.password)
 
                 _uiState.value = SignupUiState(isAuthenticated = true)
-            } catch (e: Exception) {
+            } catch (e: UsernameTakenException) {
+                _uiState.value = current.copy(
+                    isLoading = false,
+                    errorMessage = e.message
+                )
+            }
+            catch (e: Exception) {
                 _uiState.value = current.copy(
                     isLoading = false,
                     errorMessage = "Signup failed. Error message: ${e.message}"
