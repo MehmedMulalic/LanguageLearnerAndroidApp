@@ -78,6 +78,7 @@ fun LoginForm(viewModel: LoginViewModel, onSignupSelect: () -> Unit, isError: Bo
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
+    val state by viewModel.state.collectAsState()
 
     Column(
         modifier = Modifier
@@ -133,7 +134,7 @@ fun LoginForm(viewModel: LoginViewModel, onSignupSelect: () -> Unit, isError: Bo
         )
         if (isError) {
             Text(
-                "Wrong username or password. Try again.",
+                text = (state as LoginState.Error).message,
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodySmall
             )
@@ -191,7 +192,7 @@ fun PreviewSupportingText() {
                 .fillMaxWidth(),
         )
         Text(
-            "Wrong username or password. Try again.",
+            "ERROR LOREM IPSUM.",
             color = MaterialTheme.colorScheme.error,
             style = MaterialTheme.typography.bodySmall
         )
