@@ -9,10 +9,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltAndroidApp
-class LanguageLearner @Inject constructor(
-    var cookieJar: PersistentCookieJar,
-    @param:ApplicationScope private val scope: CoroutineScope
-) : Application() {
+class LanguageLearner: Application() {
+    @Inject lateinit var cookieJar: PersistentCookieJar
+    @Inject @ApplicationScope lateinit var scope: CoroutineScope
+
     override fun onCreate() {
         super.onCreate()
         scope.launch { cookieJar.initialize() }
