@@ -1,11 +1,13 @@
 package com.mmulalic.languagelearner.data.remote
 
 import android.content.Context
+import com.mmulalic.languagelearner.data.SessionExpiredAuthenticator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -26,21 +28,26 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideCookieJar(
-        storage: CookieStorage
+        storage: CookieStorage,
+        @ApplicationScope scope: CoroutineScope
     ): PersistentCookieJar {
-        return PersistentCookieJar(storage)
+        return PersistentCookieJar(storage, scope)
     }
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(cookieJar: PersistentCookieJar): OkHttpClient {
+    fun provideOkHttpClient(
+        cookieJar: PersistentCookieJar,
+        sessionExpiredAuthenticator: SessionExpiredAuthenticator
+    ): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY
+            level = HttpLoggingInterceptor.Level.NONE
         }
 
         return OkHttpClient.Builder()
             .addInterceptor(loggingInterceptor)
             .cookieJar(cookieJar)
+            .authenticator(sessionExpiredAuthenticator)
             .build()
     }
 
