@@ -35,7 +35,7 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 profileRepository.logout()
-                authRepository.setUnauthenticated()
+                authRepository.logout()
             } catch (e: Exception) {
                 _state.value = ProfileState.Error("Logout failed: ${e.message}")
             }

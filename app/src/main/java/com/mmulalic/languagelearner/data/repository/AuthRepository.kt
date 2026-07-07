@@ -8,31 +8,16 @@ import com.mmulalic.languagelearner.data.model.SignupErrorResponse
 import com.mmulalic.languagelearner.data.model.SignupRequest
 import com.mmulalic.languagelearner.data.model.exceptions.UsernameTakenException
 import com.mmulalic.languagelearner.data.remote.ApiService
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import okio.IOException
 import retrofit2.HttpException
 import javax.inject.Inject
 
-sealed interface AuthState {
-    object Unknown : AuthState
-    object Authenticated : AuthState
-    object Unauthenticated : AuthState
-}
-
 class AuthRepository @Inject constructor(
-    private val api: ApiService
+    private val api: ApiService,
+    private val sessionManager: SessionManager
 ) {
-    private val _authState = MutableStateFlow<AuthState>(AuthState.Unknown)
-    val authState: StateFlow<AuthState> = _authState
-
-    fun setAuthenticated() {
-        _authState.value = AuthState.Authenticated
-    }
-
-    fun setUnauthenticated() {
-        _authState.value = AuthState.Unauthenticated
-    }
+    val authState: StateFlow<AuthState> = sessionManager.authState
 
     suspend fun login(
         username: String,
@@ -41,14 +26,17 @@ class AuthRepository @Inject constructor(
         return try {
             Log.d("AuthRepository", "Attempting login...")
             api.postLogin(LoginRequest(username, password))
+            sessionManager.setAuthenticated()
             LoginResult.Success
 
         } catch (e: IOException) {
             Log.e("AuthRepository", "Login failed - IOException", e)
+            sessionManager.setUnauthenticated()
             LoginResult.Error.NoInternet
 
         } catch (e: HttpException) {
             Log.e("AuthRepository", "Login failed - HttpException", e)
+            sessionManager.setUnauthenticated()
             when (e.code()) {
                 401 -> LoginResult.Error.InvalidCredentials
                 in 500..599 -> LoginResult.Error.ServerError
@@ -57,6 +45,7 @@ class AuthRepository @Inject constructor(
 
         } catch (e: Exception) {
             Log.e("AuthRepository", "Login failed - Unknown error", e)
+            sessionManager.setUnauthenticated()
             LoginResult.Error.Unknown
         }
     }
@@ -82,5 +71,9 @@ class AuthRepository @Inject constructor(
             Log.e("AuthRepository", "Signup failed", e)
             throw e
         }
+    }
+
+    fun logout() {
+        sessionManager.setUnauthenticated()
     }
 }
