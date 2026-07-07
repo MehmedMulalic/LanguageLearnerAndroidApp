@@ -37,4 +37,6 @@ class PersistentCookieJar @Inject constructor(
     suspend fun initialize() {
         cache = storage.loadCookies()
     }
+
+    fun hasValidSession(): Boolean = cache.isNotEmpty()
 }

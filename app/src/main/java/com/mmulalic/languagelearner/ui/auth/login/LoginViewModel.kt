@@ -33,9 +33,7 @@ class LoginViewModel @Inject constructor(
     fun login(username: String, password: String) {
         viewModelScope.launch {
             when (val result = authRepository.login(username, password)) {
-                LoginResult.Success -> {
-                    authRepository.setAuthenticated()
-                }
+                LoginResult.Success -> {}
 
                 LoginResult.Error.NoInternet -> {
                     _state.value = LoginState.Error("Check your internet connection.")
