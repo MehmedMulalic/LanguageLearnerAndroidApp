@@ -8,7 +8,6 @@ import com.mmulalic.languagelearner.data.repository.AuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -35,7 +34,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = authRepository.login(username, password)) {
                 LoginResult.Success -> {
-
+                    authRepository.setAuthenticated()
                 }
 
                 LoginResult.Error.NoInternet -> {
