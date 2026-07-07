@@ -11,6 +11,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -34,10 +35,16 @@ fun ProfileScreen(
         }
     )
 
+    LaunchedEffect(state) {
+        if (state is ProfileState.LoggedOut) {
+            onSignoutSucces()
+        }
+    }
+
     when (state) {
         ProfileState.Loading -> CircularProgressIndicator(Modifier.fillMaxSize())
         ProfileState.LoggedIn -> ProfileForm(modifier, options)
-        ProfileState.LoggedOut -> onSignoutSucces()
+        ProfileState.LoggedOut -> CircularProgressIndicator(Modifier.fillMaxSize())
         is ProfileState.Error -> ProfileForm(modifier, options)
     }
 }

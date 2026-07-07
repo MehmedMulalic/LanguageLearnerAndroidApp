@@ -23,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,9 +49,15 @@ fun LoginScreen(
 ) {
     val state by loginViewModel.state.collectAsState()
 
+    LaunchedEffect(state) {
+        if (state is LoginState.Authenticated) {
+            onLoginSuccess()
+        }
+    }
+
     when (state) {
         LoginState.Loading -> LoadingForm()
-        LoginState.Authenticated -> onLoginSuccess()
+        LoginState.Authenticated -> LoadingForm()
         LoginState.Unauthenticated -> LoginForm(loginViewModel, onSignupSelect)
         is LoginState.Error -> LoginForm(loginViewModel, onSignupSelect, true)
     }
