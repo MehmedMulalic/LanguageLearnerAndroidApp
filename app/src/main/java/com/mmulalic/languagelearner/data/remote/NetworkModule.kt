@@ -1,6 +1,7 @@
 package com.mmulalic.languagelearner.data.remote
 
 import android.content.Context
+import com.mmulalic.languagelearner.BuildConfig
 import com.mmulalic.languagelearner.data.SessionExpiredAuthenticator
 import dagger.Module
 import dagger.Provides
@@ -41,7 +42,11 @@ object NetworkModule {
         sessionExpiredAuthenticator: SessionExpiredAuthenticator
     ): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.NONE
+            level = if (BuildConfig.DEBUG) {
+                HttpLoggingInterceptor.Level.BODY
+            } else {
+                HttpLoggingInterceptor.Level.NONE
+            }
         }
 
         return OkHttpClient.Builder()
