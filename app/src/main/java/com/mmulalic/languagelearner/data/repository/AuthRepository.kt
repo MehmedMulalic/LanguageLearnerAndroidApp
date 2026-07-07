@@ -38,7 +38,7 @@ class AuthRepository @Inject constructor(
             Log.e("AuthRepository", "Login failed - HttpException", e)
             sessionManager.setUnauthenticated()
             when (e.code()) {
-                401 -> LoginResult.Error.InvalidCredentials
+                422 -> LoginResult.Error.InvalidCredentials
                 in 500..599 -> LoginResult.Error.ServerError
                 else -> LoginResult.Error.Unknown
             }
