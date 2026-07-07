@@ -1,11 +1,13 @@
 package com.mmulalic.languagelearner.ui.main.profile
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -42,10 +44,20 @@ fun ProfileScreen(
     }
 
     when (state) {
-        ProfileState.Loading -> CircularProgressIndicator(Modifier.fillMaxSize())
+        ProfileState.Loading -> LoadingForm()
         ProfileState.LoggedIn -> ProfileForm(modifier, options)
-        ProfileState.LoggedOut -> CircularProgressIndicator(Modifier.fillMaxSize())
+        ProfileState.LoggedOut -> LoadingForm()
         is ProfileState.Error -> ProfileForm(modifier, options)
+    }
+}
+
+@Composable
+fun LoadingForm() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(modifier = Modifier.size(64.dp))
     }
 }
 
