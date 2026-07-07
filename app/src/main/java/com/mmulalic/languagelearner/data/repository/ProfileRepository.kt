@@ -5,6 +5,7 @@ import com.mmulalic.languagelearner.data.remote.ApiService
 import com.mmulalic.languagelearner.data.remote.CookieStorage
 import kotlinx.coroutines.flow.Flow
 import okhttp3.Cookie
+import retrofit2.HttpException
 import javax.inject.Inject
 
 class ProfileRepository @Inject constructor(
@@ -16,7 +17,10 @@ class ProfileRepository @Inject constructor(
     suspend fun logout() {
         try {
             Log.d("ProfileRepository", "Attempting logout...")
-            api.deleteSignout()
+            val response = api.deleteSignout()
+            if (!response.isSuccessful) {
+                throw HttpException(response)
+            }
             cookieStorage.clearCookies()
         } catch (e: Exception) {
             Log.e("ProfileRepository", "Logout failed", e)
