@@ -2,6 +2,8 @@ package com.mmulalic.languagelearner.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mmulalic.languagelearner.data.repository.AuthRepository
+import com.mmulalic.languagelearner.data.repository.AuthState
 import com.mmulalic.languagelearner.data.repository.UserRepository
 import com.mmulalic.languagelearner.ui.main.home.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,13 +14,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val userRepository: UserRepository
+    private val userRepository: UserRepository,
+    private val authRepository: AuthRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeUiState>(HomeUiState.Loading)
     val uiState: StateFlow<HomeUiState> = _uiState
+    val authState: StateFlow<AuthState> = authRepository.authState
 
     init {
         loadUser()
+        viewModelScope.launch {
+            authState.collect { auth ->
+                if (auth == AuthState.Unauthenticated) {
+                    _uiState.value = HomeUiState.Loading
+                }
+            }
+        }
     }
 
     private fun loadUser() {

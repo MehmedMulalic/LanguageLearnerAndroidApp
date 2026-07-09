@@ -11,6 +11,8 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -24,6 +26,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.mmulalic.languagelearner.data.repository.AuthState
 import com.mmulalic.languagelearner.ui.main.home.HomeScreen
 import com.mmulalic.languagelearner.ui.main.profile.ProfileScreen
 
@@ -68,8 +71,15 @@ fun MainScreen(
     val mainViewModel: MainViewModel = hiltViewModel()
     val bottomNavController = rememberNavController()
     val startDestination = Destination.HOME
+    val authState by mainViewModel.authState.collectAsState()
 
     var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
+
+    LaunchedEffect(authState) {
+        if (authState == AuthState.Unauthenticated) {
+            onSignoutSuccess()
+        }
+    }
 
     Scaffold(
         bottomBar = {
