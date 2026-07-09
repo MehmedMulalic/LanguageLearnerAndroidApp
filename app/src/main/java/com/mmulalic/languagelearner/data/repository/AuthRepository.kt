@@ -8,6 +8,7 @@ import com.mmulalic.languagelearner.data.model.SignupErrorResponse
 import com.mmulalic.languagelearner.data.model.SignupRequest
 import com.mmulalic.languagelearner.data.model.exceptions.UsernameTakenException
 import com.mmulalic.languagelearner.data.remote.ApiService
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import okio.IOException
 import retrofit2.HttpException
@@ -18,6 +19,7 @@ class AuthRepository @Inject constructor(
     private val sessionManager: SessionManager
 ) {
     val authState: StateFlow<AuthState> = sessionManager.authState
+    val sessionEvents: SharedFlow<SessionEvent> = sessionManager.sessionEvents
 
     suspend fun login(
         username: String,
