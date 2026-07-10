@@ -10,9 +10,9 @@ import javax.inject.Inject
 
 class ProfileRepository @Inject constructor(
     private val api: ApiService,
-    private val cookieStorage: CookieStorage
+    private val dataStoreCookieStorage: CookieStorage
 ){
-    val cookies: Flow<List<Cookie>> = cookieStorage.cookies
+    val cookies: Flow<List<Cookie>> = dataStoreCookieStorage.cookies
 
     suspend fun logout() {
         try {
@@ -21,7 +21,7 @@ class ProfileRepository @Inject constructor(
             if (!response.isSuccessful) {
                 throw HttpException(response)
             }
-            cookieStorage.clearCookies()
+            dataStoreCookieStorage.clearCookies()
         } catch (e: Exception) {
             Log.e("ProfileRepository", "Logout failed", e)
             throw e

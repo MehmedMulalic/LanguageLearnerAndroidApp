@@ -14,12 +14,12 @@ import javax.inject.Inject
 
 class SessionExpiredAuthenticator @Inject constructor(
     private val sessionManager: SessionManager,
-    private val cookieStorage: CookieStorage,
+    private val dataStoreCookieStorage: CookieStorage,
     @ApplicationScope private val scope: CoroutineScope
 ) : Authenticator {
     override fun authenticate(route: Route?, response: Response): Request? {
         if (response.code == 401) {
-            runBlocking { cookieStorage.clearCookies() }
+            runBlocking { dataStoreCookieStorage.clearCookies() }
             sessionManager.setUnauthenticated()
             scope.launch { sessionManager.notifySessionExpired() }
         }

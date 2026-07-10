@@ -23,7 +23,7 @@ object NetworkModule {
     fun provideCookieStorage(
         @ApplicationContext context: Context
     ): CookieStorage {
-        return CookieStorage(context)
+        return DataStoreCookieStorage(context)
     }
 
     @Provides
