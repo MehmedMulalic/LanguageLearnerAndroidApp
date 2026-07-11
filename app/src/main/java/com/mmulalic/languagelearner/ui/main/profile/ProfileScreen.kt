@@ -25,7 +25,7 @@ import com.mmulalic.languagelearner.ui.main.home.ProfileItem
 
 @Composable
 fun ProfileScreen(
-    onSignoutSucces: () -> Unit,
+    onSignOutSuccess: () -> Unit,
     modifier: Modifier = Modifier,
     profileViewModel: ProfileViewModel = hiltViewModel()
 ) {

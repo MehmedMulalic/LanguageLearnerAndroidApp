@@ -44,7 +44,7 @@ enum class Destination(
 
 @Composable
 fun AppNavHost(
-    onSignoutSuccess: () -> Unit,
+    onSignOutSuccess: () -> Unit,
     bottomNavController: NavHostController,
     startDestination: Destination,
     modifier: Modifier = Modifier,
@@ -59,7 +59,7 @@ fun AppNavHost(
                 when (destination) {
                     Destination.STATISTICS -> {} //TODO: WIP
                     Destination.HOME -> HomeScreen(mainViewModel, modifier)
-                    Destination.PROFILE -> ProfileScreen(onSignoutSuccess, modifier)
+                    Destination.PROFILE -> ProfileScreen(onSignOutSuccess, modifier)
                 }
             }
         }
@@ -68,7 +68,7 @@ fun AppNavHost(
 
 @Composable
 fun MainScreen(
-    onSignoutSuccess: () -> Unit
+    onSignOutSuccess: () -> Unit
 ) {
     val mainViewModel: MainViewModel = hiltViewModel()
     val bottomNavController = rememberNavController()
@@ -80,7 +80,7 @@ fun MainScreen(
 
     LaunchedEffect(authState) {
         if (authState == AuthState.Unauthenticated) {
-            onSignoutSuccess()
+            onSignOutSuccess()
         }
     }
     LaunchedEffect(Unit) {
@@ -115,7 +115,7 @@ fun MainScreen(
             }
         }
     ) { contentPadding ->
-        AppNavHost(onSignoutSuccess, bottomNavController, startDestination, Modifier.padding(contentPadding), mainViewModel)
+        AppNavHost(onSignOutSuccess, bottomNavController, startDestination, Modifier.padding(contentPadding), mainViewModel)
     }
 }
 

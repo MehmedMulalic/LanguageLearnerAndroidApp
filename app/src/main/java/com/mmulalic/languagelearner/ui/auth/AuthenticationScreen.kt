@@ -47,7 +47,7 @@ fun AuthenticationScreen() {
         }
         composable<Home> {
             MainScreen(
-                onSignoutSuccess = {
+                onSignOutSuccess = {
                     navController.navigate(Login) {
                         popUpTo(Home) { inclusive = true }
                     }
