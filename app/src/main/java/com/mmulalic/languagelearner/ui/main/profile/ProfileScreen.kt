@@ -30,6 +30,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,14 +40,19 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.mmulalic.languagelearner.ui.main.profile.personalization.ThemeDialog
+import com.mmulalic.languagelearner.ui.main.profile.personalization.ThemeViewModel
 
 @Composable
 fun ProfileScreen(
     onSignOutSuccess: () -> Unit,
     modifier: Modifier = Modifier,
-    profileViewModel: ProfileViewModel = hiltViewModel()
+    profileViewModel: ProfileViewModel = hiltViewModel(),
+    themeViewModel: ThemeViewModel = hiltViewModel()
 ) {
     val state by profileViewModel.state.collectAsState()
+    val themeOption by themeViewModel.themeOption.collectAsState()
+    var showThemeDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
         if (state is ProfileState.LoggedOut) {
@@ -61,9 +69,20 @@ fun ProfileScreen(
                 onEmailClick = {},
                 onChangePasswordClick = {},
                 onNotificationsClick = {},
-                onDarkModeClick = {},
+                onDarkModeClick = { showThemeDialog = true },
                 onLogoutClick = profileViewModel::logout
             )
+        )
+    }
+
+    if (showThemeDialog) {
+        ThemeDialog(
+            selected = themeOption,
+            onDismiss = { showThemeDialog = false },
+            onConfirm = { chosen ->
+                themeViewModel.setThemeOption(chosen)
+                showThemeDialog = false
+            }
         )
     }
 }
