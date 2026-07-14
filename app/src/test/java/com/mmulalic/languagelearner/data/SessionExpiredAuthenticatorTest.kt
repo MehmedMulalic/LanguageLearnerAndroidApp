@@ -1,15 +1,11 @@
 package com.mmulalic.languagelearner.data
 
-import com.mmulalic.languagelearner.data.model.SerializableCookie
 import com.mmulalic.languagelearner.data.remote.CookieStorage
-import com.mmulalic.languagelearner.data.remote.DataStoreCookieStorage
 import com.mmulalic.languagelearner.data.repository.AuthState
 import com.mmulalic.languagelearner.data.repository.SessionManager
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import okhttp3.Cookie
