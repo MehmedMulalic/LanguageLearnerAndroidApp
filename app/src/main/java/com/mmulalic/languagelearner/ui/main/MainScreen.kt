@@ -45,63 +45,6 @@ enum class Destination(
 }
 
 @Composable
-fun AppNavHost(
-    onSignOutSuccess: () -> Unit,
-    bottomNavController: NavHostController,
-    startDestination: Destination,
-    modifier: Modifier = Modifier,
-    mainViewModel: MainViewModel
-) {
-    NavHost(
-        bottomNavController,
-        startDestination = startDestination.route
-    ) {
-        Destination.entries.forEach { destination ->
-            composable(destination.route) {
-                when (destination) {
-                    Destination.STATISTICS -> {} //TODO: WIP
-                    Destination.HOME -> HomeScreen(mainViewModel, modifier)
-                    Destination.PROFILE -> ProfileScreen(onSignOutSuccess, modifier)
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun MainScaffold(
-    selectedDestination: Int,
-    onDestinationClicked: (Int, Destination) -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable (Modifier) -> Unit
-) {
-    Scaffold(
-        modifier = modifier,
-        bottomBar = {
-            NavigationBar(
-                modifier = Modifier.height(68.dp)
-            ) {
-                Destination.entries.forEachIndexed { index, destination ->
-                    NavigationBarItem(
-                        selected = selectedDestination == index,
-                        onClick = { onDestinationClicked(index, destination) },
-                        icon = {
-                            Icon(
-                                destination.icon,
-                                contentDescription = destination.label
-                            )
-                        },
-                        label = { Text(destination.label) }
-                    )
-                }
-            }
-        }
-    ) { contentPadding ->
-        content(Modifier.padding(contentPadding))
-    }
-}
-
-@Composable
 fun MainScreen(
     onSignOutSuccess: () -> Unit
 ) {
@@ -139,9 +82,66 @@ fun MainScreen(
     }
 }
 
+@Composable
+private fun AppNavHost(
+    onSignOutSuccess: () -> Unit,
+    bottomNavController: NavHostController,
+    startDestination: Destination,
+    modifier: Modifier = Modifier,
+    mainViewModel: MainViewModel
+) {
+    NavHost(
+        bottomNavController,
+        startDestination = startDestination.route
+    ) {
+        Destination.entries.forEach { destination ->
+            composable(destination.route) {
+                when (destination) {
+                    Destination.STATISTICS -> {} //TODO: WIP
+                    Destination.HOME -> HomeScreen(mainViewModel, modifier)
+                    Destination.PROFILE -> ProfileScreen(onSignOutSuccess, modifier)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MainScaffold(
+    selectedDestination: Int,
+    onDestinationClicked: (Int, Destination) -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable (Modifier) -> Unit
+) {
+    Scaffold(
+        modifier = modifier,
+        bottomBar = {
+            NavigationBar(
+                modifier = Modifier.height(68.dp)
+            ) {
+                Destination.entries.forEachIndexed { index, destination ->
+                    NavigationBarItem(
+                        selected = selectedDestination == index,
+                        onClick = { onDestinationClicked(index, destination) },
+                        icon = {
+                            Icon(
+                                destination.icon,
+                                contentDescription = destination.label
+                            )
+                        },
+                        label = { Text(destination.label) }
+                    )
+                }
+            }
+        }
+    ) { contentPadding ->
+        content(Modifier.padding(contentPadding))
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
-fun PreviewMainScreen() {
+private fun PreviewMainScreen() {
     var selectedDestination by remember { mutableIntStateOf(Destination.HOME.ordinal) }
 
     MainScaffold(
