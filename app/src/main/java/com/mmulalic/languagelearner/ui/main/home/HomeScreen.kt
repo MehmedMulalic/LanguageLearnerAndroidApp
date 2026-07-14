@@ -1,7 +1,6 @@
 package com.mmulalic.languagelearner.ui.main.home
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -22,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -73,9 +73,9 @@ fun HomeScreenForm(
         fontWeight = FontWeight.Medium
     )
 
-    Box(
+    Surface(
         modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        color = MaterialTheme.colorScheme.background
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -85,9 +85,8 @@ fun HomeScreenForm(
         ) {
             Text(
                 "Welcome Back ${userData.username}",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                fontSize = 30.sp
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -107,8 +106,10 @@ fun HomeScreenForm(
                 modifier = Modifier.align(Alignment.CenterHorizontally).width(200.dp)
             ) {
                 Text(
-                    "Start",
-                    fontSize = 32.sp
+                    text = "Start",
+                    style = MaterialTheme.typography.titleLarge.copy(
+                        fontSize = 32.sp
+                    )
                 )
                 Icon(
                     Icons.Default.PlayArrow,
