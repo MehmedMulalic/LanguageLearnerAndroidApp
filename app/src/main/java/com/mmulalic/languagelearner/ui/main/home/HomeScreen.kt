@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -134,9 +133,9 @@ fun HomeScreenForm(
 
                     Text("$tasksCompleted / ${userData.tasksToday} tasks done for today.")
                     Spacer(Modifier.height(6.dp))
-                    Text(boldText("", "${userData.tasksCount.tests}", " test tasks left for today."))
+                    Text(boldText(boldPart = "${userData.tasksCount.tests}", suffix = " test tasks left for today."))
                     Spacer(Modifier.height(6.dp))
-                    Text(boldText("", "${userData.tasksCount.words}", " word tasks left for today."))
+                    Text(boldText(boldPart = "${userData.tasksCount.words}", suffix = " word tasks left for today."))
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -180,7 +179,7 @@ fun HomeScreenForm(
 }
 
 @Composable
-private fun boldText(prefix: String, boldPart: String, suffix: String) =
+private fun boldText(prefix: String = "", boldPart: String, suffix: String) =
     buildAnnotatedString {
         append(prefix)
         withStyle(SpanStyle(
