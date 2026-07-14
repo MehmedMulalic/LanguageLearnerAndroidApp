@@ -22,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +39,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.mmulalic.languagelearner.ui.LoadingForm
+import com.mmulalic.languagelearner.ui.main.profile.personalization.NotificationViewModel
 import com.mmulalic.languagelearner.ui.main.profile.personalization.ThemeDialog
 import com.mmulalic.languagelearner.ui.main.profile.personalization.ThemeViewModel
 
@@ -46,10 +48,12 @@ fun ProfileScreen(
     onSignOutSuccess: () -> Unit,
     modifier: Modifier = Modifier,
     profileViewModel: ProfileViewModel = hiltViewModel(),
-    themeViewModel: ThemeViewModel = hiltViewModel()
+    themeViewModel: ThemeViewModel = hiltViewModel(),
+    notificationViewModel: NotificationViewModel = hiltViewModel()
 ) {
     val state by profileViewModel.state.collectAsState()
     val themeOption by themeViewModel.themeOption.collectAsState()
+    val notificationsEnabled by notificationViewModel.notificationsEnabled.collectAsState()
     var showThemeDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(state) {
@@ -62,11 +66,12 @@ fun ProfileScreen(
         ProfileState.Loading, ProfileState.LoggedOut -> LoadingForm()
         ProfileState.LoggedIn, is ProfileState.Error -> ProfileForm(
             modifier = modifier,
+            notificationsEnabled,
             actions = ProfileActions(
                 onProfileClick = {},
                 onEmailClick = {},
                 onChangePasswordClick = {},
-                onNotificationsClick = {},
+                onNotificationsClick = notificationViewModel::setNotificationsEnabled,
                 onDarkModeClick = { showThemeDialog = true },
                 onLogoutClick = profileViewModel::logout
             )
@@ -88,6 +93,7 @@ fun ProfileScreen(
 @Composable
 private fun ProfileForm(
     modifier: Modifier = Modifier,
+    notificationsEnabled: Boolean,
     actions: ProfileActions = ProfileActions()
 ) {
     Surface(
@@ -122,10 +128,11 @@ private fun ProfileForm(
             Column {
                 SettingsHeader("Personalization")
                 SettingsCard {
-                    SettingsRow(
-                        "Notifications",
-                        actions.onNotificationsClick,
-                        Icons.Outlined.Notifications
+                    SettingsSwitchRow(
+                        label = "Notifications",
+                        checked = notificationsEnabled,
+                        onCheckedChange = actions.onNotificationsClick,
+                        icon = Icons.Outlined.Notifications
                     )
                     SettingsRow(
                         "Dark Mode",
@@ -176,6 +183,34 @@ private fun SettingsCard(
 }
 
 @Composable
+private fun SettingsSwitchRow(
+    label: String,
+    checked: Boolean,
+    icon: ImageVector,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    ) {
+        Icon(
+            icon,
+            contentDescription = null
+        )
+        Text(
+            text = label,
+            color = LocalContentColor.current,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier
+                .weight(1f)
+                .padding(horizontal = 8.dp, vertical = 4.dp)
+        )
+        Switch(checked = checked, onCheckedChange = onCheckedChange)
+    }
+}
+
+@Composable
 private fun SettingsRow(
     label: String,
     onClick: () -> Unit,
@@ -213,5 +248,5 @@ private fun SettingsRow(
 @Preview(showBackground = true)
 @Composable
 private fun ProfileFormPreview() {
-    ProfileForm(Modifier)
+    ProfileForm(Modifier, true)
 }

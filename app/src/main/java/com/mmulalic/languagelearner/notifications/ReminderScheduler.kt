@@ -20,6 +20,13 @@ object ReminderScheduler {
         )
     }
 
+    fun cancelReminder(context: Context) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val pendingIntent = buildPendingIntent(context)
+
+        alarmManager.cancel(pendingIntent)
+    }
+
     internal fun getNextTriggerTime(hour: Int, minute: Int): Long {
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, hour)

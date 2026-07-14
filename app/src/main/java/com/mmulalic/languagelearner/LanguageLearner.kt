@@ -8,8 +8,10 @@ import com.mmulalic.languagelearner.data.remote.ApplicationScope
 import com.mmulalic.languagelearner.data.remote.PersistentCookieJar
 import com.mmulalic.languagelearner.data.repository.SessionManager
 import com.mmulalic.languagelearner.notifications.ReminderScheduler
+import com.mmulalic.languagelearner.ui.main.profile.personalization.NotificationPreference
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -17,6 +19,7 @@ import javax.inject.Inject
 class LanguageLearner: Application() {
     @Inject lateinit var sessionManager: SessionManager
     @Inject lateinit var cookieJar: PersistentCookieJar
+    @Inject lateinit var notificationPreference: NotificationPreference
     @Inject @ApplicationScope lateinit var scope: CoroutineScope
 
     override fun onCreate() {
@@ -26,9 +29,11 @@ class LanguageLearner: Application() {
             cookieJar.initialize()
             resolveInitialAuthState()
             createNotificationChannel()
-        }
 
-        ReminderScheduler.scheduleNextReminder(this)
+            if (notificationPreference.notificationsEnabled.first()) {
+                ReminderScheduler.scheduleNextReminder(this@LanguageLearner)
+            }
+        }
     }
 
     private fun resolveInitialAuthState() {
