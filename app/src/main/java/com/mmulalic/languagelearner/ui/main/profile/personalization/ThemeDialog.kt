@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -37,15 +38,21 @@ fun ThemeDialog(
 
     Dialog(onDismissRequest = onDismiss) {
         Card(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Column(
-                modifier = Modifier.padding(12.dp)
-            ) {
+            Column {
                 Text(
-                    "Choose a theme",
-                    style = MaterialTheme.typography.titleLarge
+                    text = "Select a Theme",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(vertical = 12.dp)
+                )
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(Modifier.height(16.dp))
 
@@ -54,7 +61,7 @@ fun ThemeDialog(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { currentSelection = option }
-                            .padding(vertical = 12.dp),
+                            .padding(vertical = 4.dp, horizontal = 12.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         RadioButton(
@@ -65,9 +72,16 @@ fun ThemeDialog(
                     }
                 }
                 Spacer(Modifier.height(16.dp))
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outline,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth().
+                        padding(vertical = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(
                         64.dp,
                         Alignment.CenterHorizontally
@@ -77,7 +91,7 @@ fun ThemeDialog(
                         Text("Cancel")
                     }
                     Button(onClick = { onConfirm(currentSelection) }) {
-                        Text("OK")
+                        Text("Confirm")
                     }
                 }
             }
