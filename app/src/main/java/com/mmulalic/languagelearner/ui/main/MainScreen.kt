@@ -69,6 +69,39 @@ fun AppNavHost(
 }
 
 @Composable
+fun MainScaffold(
+    selectedDestination: Int,
+    onDestinationClicked: (Int, Destination) -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable (Modifier) -> Unit
+) {
+    Scaffold(
+        modifier = modifier,
+        bottomBar = {
+            NavigationBar(
+                modifier = Modifier.height(68.dp)
+            ) {
+                Destination.entries.forEachIndexed { index, destination ->
+                    NavigationBarItem(
+                        selected = selectedDestination == index,
+                        onClick = { onDestinationClicked(index, destination) },
+                        icon = {
+                            Icon(
+                                destination.icon,
+                                contentDescription = destination.label
+                            )
+                        },
+                        label = { Text(destination.label) }
+                    )
+                }
+            }
+        }
+    ) { contentPadding ->
+        content(Modifier.padding(contentPadding))
+    }
+}
+
+@Composable
 fun MainScreen(
     onSignOutSuccess: () -> Unit
 ) {
@@ -91,60 +124,30 @@ fun MainScreen(
         }
     }
 
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                Destination.entries.forEachIndexed { index, destination ->
-                    NavigationBarItem(
-                        selected = selectedDestination == index,
-                        onClick = {
-                            bottomNavController.navigate(route = destination.route) {
-                                popUpTo(bottomNavController.graph.findStartDestination().id) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                            selectedDestination = index
-                        },
-                        icon = {
-                            Icon(
-                                destination.icon,
-                                contentDescription = destination.label
-                            )
-                        },
-                        label = { Text(destination.label) }
-                    )
-                }
+    MainScaffold(
+        selectedDestination = selectedDestination,
+        onDestinationClicked = { index, destination ->
+            bottomNavController.navigate(route = destination.route) {
+                popUpTo(bottomNavController.graph.findStartDestination().id) { saveState = true }
+                launchSingleTop = true
+                restoreState = true
             }
+            selectedDestination = index
         }
-    ) { contentPadding ->
-        AppNavHost(onSignOutSuccess, bottomNavController, startDestination, Modifier.padding(contentPadding), mainViewModel)
+    ) { contentModifier ->
+        AppNavHost(onSignOutSuccess, bottomNavController, startDestination, contentModifier, mainViewModel)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewMainScreen() {
-    Scaffold(
-        bottomBar = {
-            NavigationBar(
-                modifier = Modifier.height(64.dp)
-            ) {
-                Destination.entries.forEachIndexed { index, destination ->
-                    NavigationBarItem(
-                        selected = 1 == index,
-                        onClick = {},
-                        icon = {
-                            Icon(
-                                destination.icon,
-                                contentDescription = destination.label
-                            )
-                        },
-                        label = { Text("IPSUM LOREM") }
-                    )
-                }
-            }
-        }
-    ) { contentPadding ->
-        Text("This is a test", modifier = Modifier.padding(contentPadding))
+    var selectedDestination by remember { mutableIntStateOf(Destination.HOME.ordinal) }
+
+    MainScaffold(
+        selectedDestination = selectedDestination,
+        { index, _ -> selectedDestination = index}
+    ) { contentModifier ->
+        Text("Preview Content", modifier = contentModifier)
     }
 }
