@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import com.mmulalic.languagelearner.ui.LoadingForm
 import com.mmulalic.languagelearner.ui.main.profile.personalization.ThemeDialog
 import com.mmulalic.languagelearner.ui.main.profile.personalization.ThemeViewModel
 
@@ -84,16 +85,6 @@ fun ProfileScreen(
                 showThemeDialog = false
             }
         )
-    }
-}
-
-@Composable
-fun LoadingForm() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator(modifier = Modifier.size(64.dp))
     }
 }
 

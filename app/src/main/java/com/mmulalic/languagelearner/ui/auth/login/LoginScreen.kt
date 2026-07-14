@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.mmulalic.languagelearner.R
+import com.mmulalic.languagelearner.ui.LoadingForm
 
 @Composable
 fun LoginScreen(
@@ -60,16 +61,6 @@ fun LoginScreen(
         LoginState.Authenticated -> LoadingForm()
         LoginState.Unauthenticated -> LoginForm(loginViewModel, onSignupSelect)
         is LoginState.Error -> LoginForm(loginViewModel, onSignupSelect, true)
-    }
-}
-
-@Composable
-fun LoadingForm() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator(modifier = Modifier.size(64.dp))
     }
 }
 
