@@ -193,13 +193,13 @@ private fun boldText(prefix: String = "", boldPart: String, suffix: String) =
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewHomeScreen() {
+private fun PreviewHomeScreen() {
     HomeScreenForm(userData = UserData("Mele", 1, 2, 3))
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewNavigationDrawer() {
+private fun PreviewNavigationDrawer() {
     val drawerState = rememberDrawerState(DrawerValue.Open)
 
     ModalNavigationDrawer(
