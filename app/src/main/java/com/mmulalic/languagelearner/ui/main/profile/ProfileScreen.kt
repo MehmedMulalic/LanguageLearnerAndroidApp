@@ -86,7 +86,7 @@ fun ProfileScreen(
 }
 
 @Composable
-fun ProfileForm(
+private fun ProfileForm(
     modifier: Modifier = Modifier,
     actions: ProfileActions = ProfileActions()
 ) {
@@ -150,7 +150,7 @@ fun ProfileForm(
 }
 
 @Composable
-fun SettingsHeader(
+private fun SettingsHeader(
     label: String
 ) {
     Text(
@@ -162,7 +162,7 @@ fun SettingsHeader(
 }
 
 @Composable
-fun SettingsCard(
+private fun SettingsCard(
     content: @Composable ColumnScope.() -> Unit
 ) {
     Card(
@@ -176,7 +176,7 @@ fun SettingsCard(
 }
 
 @Composable
-fun SettingsRow(
+private fun SettingsRow(
     label: String,
     onClick: () -> Unit,
     icon: ImageVector,
@@ -212,6 +212,6 @@ fun SettingsRow(
 
 @Preview(showBackground = true)
 @Composable
-fun ProfileFormPreview() {
+private fun ProfileFormPreview() {
     ProfileForm(Modifier)
 }
